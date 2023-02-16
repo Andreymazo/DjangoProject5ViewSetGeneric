@@ -1,0 +1,56 @@
+{% extends 'spa/base.html' %}
+{% block content %}
+  <h2 class="display-6 text-center mb-6">SPA</h2>
+ <table class="table table-light table-striped table-hover align-items-center  text-center">
+          <thead>
+            <tr>
+
+                <th scope="col">название курса</th>
+                <th scope="col">описание курса</th>
+                <th scope="col">фото курса</th>
+                <th scope="col">название урока</th>
+                <th scope="col">описание урока</th>
+                <th scope="col">фото урока</th>
+            </tr>
+          </thead>
+          <tbody>
+           {% for object in object_list %}
+                <tr>
+                    <td>
+
+
+                    <td>
+                        <img src="/media/{{object.preview}}"  width="50" height=50  alt=""/>
+
+                    </td>
+                    <td>{{object.product_description}}</td>
+                    <td>{{object.category}}</td>
+                    <td>{{object.price_per_unit}}</td>
+
+                    <td>{{object.get_status_display}
+
+                                <a class="btn btn-light" href="{% url 'catalog:status' object.pk %}">X</a>
+
+                                <a class="btn btn-light" href="{% url 'catalog:status' object.pk %}">V</a>
+
+                    </td>
+                    <td>
+                        <a class="btn.btn-default" href="{% url 'catalog:Product_form' object.pk %}" >Update</a>
+
+                            <a class="btn.btn-default" href="{% url 'catalog:Product_create' object.pk %}" >Create</a>
+
+
+                            <a class="btn.btn-default" href="{% url 'catalog:Product_delete' object.pk %}" >Delete</a>
+
+
+                    </td>
+
+                    </td>
+                </tr>
+
+          {% endfor %}
+
+          </tbody>
+        </table>
+{% endblock %}
+~
