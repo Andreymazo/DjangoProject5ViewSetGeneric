@@ -9,11 +9,14 @@ app_name = SpaConfig.name##Ne pokazal nam obyavlenia prilozhenia
 router = DefaultRouter()
 router.register(r'home', CourseViewset, basename='home')
 
-urlpatterns = [] + router.urls
-
+urlpatterns = [path('', SigninView.as_view(template_name='spa/login.html'), name='login'),
+               path('register', SignupView.as_view(template_name='spa/register.html'), name='register'),
+               path('home/', SignupView.as_view(template_name='spa/home.html'), name='home')
+               ] + router.urls
+#
 #     [
-#     path('', SigninView.as_view(template_name='spa/login.html'), name='login'),
-#     path('register', SignupView.as_view(template_name='spa/register.html'), name='register'),
-#     path('home/', SignupView.as_view(template_name='spa/home.html'), name='home')
+#     ,
+#
+#
 # ]
 
