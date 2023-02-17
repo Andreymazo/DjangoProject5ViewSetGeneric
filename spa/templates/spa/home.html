@@ -18,34 +18,16 @@
                 <tr>
                     <td>
 
+                    <td>{{object.name}}</td>
 
                     <td>
                         <img src="/media/{{object.preview}}"  width="50" height=50  alt=""/>
 
                     </td>
-                    <td>{{object.product_description}}</td>
-                    <td>{{object.category}}</td>
+
+                    <td>{{object.description}}</td>
                     <td>{{object.price_per_unit}}</td>
 
-                    <td>{{object.get_status_display}
-
-                                <a class="btn btn-light" href="{% url 'catalog:status' object.pk %}">X</a>
-
-                                <a class="btn btn-light" href="{% url 'catalog:status' object.pk %}">V</a>
-
-                    </td>
-                    <td>
-                        <a class="btn.btn-default" href="{% url 'catalog:Product_form' object.pk %}" >Update</a>
-
-                            <a class="btn.btn-default" href="{% url 'catalog:Product_create' object.pk %}" >Create</a>
-
-
-                            <a class="btn.btn-default" href="{% url 'catalog:Product_delete' object.pk %}" >Delete</a>
-
-
-                    </td>
-
-                    </td>
                 </tr>
 
           {% endfor %}

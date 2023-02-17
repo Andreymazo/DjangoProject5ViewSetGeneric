@@ -10,7 +10,7 @@ router = DefaultRouter()
 router.register(r'home', CourseViewset, basename='home')
 
 urlpatterns = [] + router.urls
-#
+
 #     [
 #     path('', SigninView.as_view(template_name='spa/login.html'), name='login'),
 #     path('register', SignupView.as_view(template_name='spa/register.html'), name='register'),
