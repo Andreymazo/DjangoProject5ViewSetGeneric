@@ -16,7 +16,7 @@ urlpatterns = [
                path('', SigninView.as_view(template_name='spa/login.html'), name='login'),
                path('register', SignupView.as_view(template_name='spa/register.html'), name='register'),
                path('home/', CourseViewSet.as_view({'get': 'list'}), name='home'),#template_name='spa/home.html'
-               path('home/<int:pk>', CourseViewSet.as_view({"get": "retrieve", "post": "create", "put": "update", "patch": "partial_update", "delete": "destroy"}), name='home'),#template_name='spa/course_list.html'
+               path('home/course_create/', CourseViewSet.as_view({"get": "retrieve", "post": "create", "put": "update", "patch": "partial_update", "delete": "destroy"}), name='home'),#template_name='spa/course_list.html'
                path('home/lesson_list/', LessonListAPIView.as_view(), name='lesson_list'),
                path('home/lesson_list/create', LessonCreateAPIView.as_view(), name='lesson_create'),
                path('home/lesson_list/<int:pk>', LessonUpdateView.as_view(), name='lesson_update'),
