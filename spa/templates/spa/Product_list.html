@@ -1,0 +1,98 @@
+{% extends 'catalog/base.html' %}
+    {% block content %}
+<h1>Category</h1>
+  <table class="table table-dark table-striped">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Category</th>
+              <th scope="col">Category Description</th>
+
+            </tr>
+          </thead>
+          <tbody>
+           {% for object in object_list %}
+<!--                {% if object.category != "nasekomie" %}-->
+                <tr>
+                    <td>{{object.id}}</td>
+                    <td>{{object.category}}</td>
+                    <td>{{object.category_description}}</td>
+
+                </tr>
+<!--                {% endif %}-->
+          {% endfor %}
+          </tbody>
+        </table>
+<!--https://pickimage.ru/wp-content/uploads/images/detskie/orange/apelsin8.jpg-->
+<div class="card" style="width: 18rem;">
+  <img src="/media/grocery_delivery.avif" width="10" height="200" class="card-img-top" alt="Lemon">
+  <div class="card-body">
+    <p class="card-text">Gentle groceries from friendly people, hm... friendly groceries from gentle people</p>
+  </div>
+</div>
+
+    {% load filter_catalog %}
+
+<h1>Products</h1>
+          <table class="table table-dark table-striped">
+          <thead>
+            <tr>
+                <th scope="col">Details</th>
+                <th scope="col">№</th>
+                <th scope="col">Product Name</th>
+                <th scope="col">Preview</th>
+                <th scope="col">Product Description</th>
+                <th scope="col">Product Category</th>
+                <th scope="col">Price of Unit</th>
+                <th scope="col">Status</th>
+                <th scope="col">Make choice</th>
+            </tr>
+          </thead>
+          <tbody>
+           {% for object in object_list %}
+                <tr>
+                    <td>
+                    <a class="btn btn-outline-light w-50" href="{% url 'catalog:Product_detail' object.pk %}"></a>
+
+
+                    <td>{{object.id}}</td>
+                    <td> {{ object.product_name|truncatechars:5 }} </td>
+
+                    <td>
+                        <img src="/media/{{object.preview}}"  width="50" height=50  alt=""/>
+
+                    </td>
+                    <td>{{object.product_description}}</td>
+                    <td>{{object.category}}</td>
+                    <td>{{object.price_per_unit}}</td>
+
+                    <td>{{object.get_status_display}}
+                        {% if perms.catalog.set_published_status %}
+                            {% if object.published_status %}
+
+                                <a class="btn btn-light" href="{% url 'catalog:status' object.pk %}">X</a>
+                                {% else %}
+                                <a class="btn btn-light" href="{% url 'catalog:status' object.pk %}">V</a>
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a class="btn.btn-default" href="{% url 'catalog:Product_form' object.pk %}" >Update</a>
+                        {% if perms.catalog.create_Product %}
+                            <a class="btn.btn-default" href="{% url 'catalog:Product_create' object.pk %}" >Create</a>
+                        {% endif %}
+                        {% if perms.catalog.delete_products %}
+                            <a class="btn.btn-default" href="{% url 'catalog:Product_delete' object.pk %}" >Delete</a>
+                        {% endif %}
+
+                    </td>
+
+                    </td>
+                </tr>
+
+          {% endfor %}
+
+          </tbody>
+        </table>
+<h1> {{g}}</h1>
+    {% endblock %}

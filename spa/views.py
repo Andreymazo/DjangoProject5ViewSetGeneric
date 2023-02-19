@@ -12,7 +12,6 @@ from rest_framework import viewsets, generics
 
 from spa.serializer import LessonSerializer, CourseSerializer
 
-
 class SigninView(LoginView):
     template_name = 'spa/login.html'
     form_class = SigninForm
@@ -22,28 +21,31 @@ class SignupView(CreateView):
     form_class = SignupForm
     success_url = reverse_lazy('spa:home')
 
-class CourseListView(ListView):
-    model = Course
-    template_name = 'spa/home'
-    success_url=reverse_lazy('spa:home')###home pomenyem potom
-class CourseViewset(viewsets.ModelViewSet):
+# class CourseListView(ListView):
+#     model = Course
+#     # template_name = 'spa/course_list.html'
+#     success_url=reverse_lazy('spa:Course_create')###home pomenyem potom
+class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
-
+    template_name = 'spa/home.html'
+    success_url = reverse_lazy('spa:Course_create')
 class LessonListAPIView(generics.ListAPIView):
     serializer_class = LessonSerializer
-
+    queryset = Lesson.objects.all()
+    success_url = reverse_lazy('spa:Lesson_create')
 class LessonCreateAPIView(generics.CreateAPIView):
     serializer_class=CourseSerializer
+    queryset = Lesson.objects.all()
 
 class LessonUpdateView(UpdateAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
 
-class BreedRetrieveView(RetrieveAPIView):
+class LessonRetrieveView(RetrieveAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
-class BreedRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
+class LessonRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
 
