@@ -47,10 +47,27 @@ class User(AbstractUser):
     def __str__(self):
             return f'{self.email}{self.phone}{self.avatar}  {self.city}'
 
+class Lesson(models.Model):
+    name = models.CharField(max_length=35, verbose_name='название урока', **NULLABLE)
+    preview = preview = models.ImageField(upload_to='media/', verbose_name='картинка к уроку', **NULLABLE)
+    smth = models.ForeignKey('spa.Course',on_delete=models.CASCADE, related_name='smthin', **NULLABLE)
+    description = models.CharField(max_length=350, verbose_name='описание урока', **NULLABLE)
+    reference = models.CharField(max_length=55, **NULLABLE, verbose_name='ссылка на видео')
+
+
+    class Meta:
+        verbose_name='урок'
+        verbose_name_plural = 'уроки'
+
+    def __str__(self):
+        return f'{self.name}{self.preview}   {self.reference}'#{self.description}
+
+
 class Course(models.Model):
     name = models.CharField(max_length=35, verbose_name='название курса', **NULLABLE)
     preview = models.ImageField(upload_to='media/', **NULLABLE)
     description = models.TextField(max_length=300, verbose_name='описание курса', **NULLABLE)
+
 
     class Meta:
         verbose_name = 'курс'
@@ -59,19 +76,7 @@ class Course(models.Model):
     def __str__(self):
             return f'{self.name}{self.preview}  {self.description}'
 
-class Lesson(models.Model):
-    name = models.CharField(max_length=35, verbose_name='название урока', **NULLABLE)
-    preview = preview = models.ImageField(upload_to='media/', verbose_name='картинка к уроку', **NULLABLE)
-    description = models.ForeignKey(Course, on_delete=models.CASCADE, max_length=350, verbose_name='описание урока', **NULLABLE)
-    reference = models.FileField(upload_to='media/', **NULLABLE, verbose_name='ссылка на видео')
 
-
-    class Meta:
-        verbose_name='урок'
-        verbose_name_plural = 'уроки'
-
-    def __str__(self):
-        return f'{self.name}{self.preview}  {self.description} {self.reference}'
 class Payments(models.Model):
     client = models.CharField(max_length=35, verbose_name='пользователь', **NULLABLE)
     date_of_payment = models.DateTimeField(auto_now_add=True, verbose_name='дата оплаты')

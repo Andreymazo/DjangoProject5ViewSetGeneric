@@ -25,15 +25,23 @@ class SignupView(CreateView):
 #     model = Course
 #     # template_name = 'spa/course_list.html'
 #     success_url=reverse_lazy('spa:Course_create')###home pomenyem potom
+class CourseCreateAPIView(generics.CreateAPIView):
+    serializer_class = CourseSerializer
+    queryset = Lesson.objects.all()
+
 class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
-    template_name = 'spa/home.html'
+    # template_name = 'spa/home.html'
     success_url = reverse_lazy('spa:Course_create')
+    # serializers = {
+    #     "list": CourseSerializer
+    #     }
 class LessonListAPIView(generics.ListAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
     success_url = reverse_lazy('spa:Lesson_create')
+
 class LessonCreateAPIView(generics.CreateAPIView):
     serializer_class=CourseSerializer
     queryset = Lesson.objects.all()
