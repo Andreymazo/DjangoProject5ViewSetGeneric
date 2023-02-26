@@ -1,18 +1,108 @@
+# from django.contrib import admin
+# from django.contrib.admin.forms import AdminPasswordChangeForm
+# from django.contrib.auth.admin import UserAdmin
+# from forms import CustomUserRegistrationForm
+# from django.contrib.auth.forms import UserChangeForm, UserCreationForm
+# from pkg_resources import _
+
+from spa.models import CustomUser, Course, Lesson \
+    # , CustomUserManager
+
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from .models import CustomUser
+from .forms import CustomUserRegistrationForm, CustomUserChangeForm
 
-from spa.models import User, Course, Lesson
+
+class CustomUserAdmin(BaseUserAdmin):
+    add_form = CustomUserRegistrationForm
+    form = CustomUserChangeForm
+    model = CustomUser
+
+    list_display = ('email'),  # 'company''firstname', 'lastname',
+    list_filter = ('email',)
+    ordering = ('email',)
+    fieldsets = (
+        (None, {'fields': ('email', 'password')}),##'old_password', 'new_password', 'new_password2'
+        ('Permissions', {'fields': ('is_staff', 'is_superuser', 'groups', 'user_permissions',)}),
+        # ('Personal Information', {'fields': ('firstname', 'lastname', 'phone')}),
+    )
+    add_fieldsets = (
+        (None, {'fields': ('email', 'password', 'is_staff')}),##'password2', 
+        # ('Personal Information', {'fields': ('firstname', 'lastname', 'phone')}),
+        # ('Company Information', {'fields': ('company',)}),
+    )
+
+    class Meta:
+        model = CustomUser
 
 
-class UserAdmin(admin.ModelAdmin):
-    list_display = ['email', 'phone', 'avatar', 'city']
-admin.site.register(User)
+admin.site.register(CustomUser, CustomUserAdmin)
+
+
+# class MyUserChangeForm(UserChangeForm):##Menyaem adminku dlya Usera
+#     class Meta(UserChangeForm.Meta):
+#         model = CustomUser
+# class MyUserAdmin(UserAdmin):
+#     add_form = CustomUserRegistrationForm
+#     form = MyUserChangeForm
+#
+#     list_display = ("email", "is_staff")
+#     list_filter = ("is_staff", "is_superuser", "is_active", "groups")
+#     search_fields = "email"
+#     ordering = ("email",)
+#     fieldsets = (
+#         (None, {"fields": ("email", "password")}),
+#         (_("Personal info"), {"fields": "email"}),
+#         (
+#             _("Permissions"),
+#             {
+#                 "fields": (
+#                     "is_active",
+#                     "is_staff",
+#                     "is_superuser",
+#                     "groups",
+#                     "user_permissions",
+#                 ),
+#             },
+#         ),
+#         (_("Important dates"), {"fields": ("last_login", "date_joined")}),
+#     )
+#     add_fieldsets = (
+#         (
+#             None,
+#             {
+#                 "classes": ("wide",),
+#                 "fields": ("email", "password1", "password2"),
+#             },
+#         ),
+#     )
+#     form = UserChangeForm
+#     add_form = UserCreationForm
+#     change_password_form = AdminPasswordChangeForm
+
+# filter_horizontal = (
+#     "groups",
+#     "user_permissions",
+# )
+
+# admin.site.register(CustomUser, UserAdmin)
+# admin.site.register(CustomUserManager)
+# class UserAdmin(admin.ModelAdmin):
+#     list_display = ['email']#, 'phone', 'avatar', 'city'
+# admin.site.register(User)
 
 class CourseAdmin(admin.ModelAdmin):
     list_display = ['name', 'preview', 'description']
+
+
 admin.site.register(Course)
+
 
 class LessonAdmin(admin.ModelAdmin):
     list_display = ['name', 'preview', 'description', 'reference']
+
+
 admin.site.register(Lesson)
 
 # class MyVideoAdmin(admin.ModelAdmin):
