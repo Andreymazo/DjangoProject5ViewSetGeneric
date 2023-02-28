@@ -17,16 +17,16 @@ class UserSubscriptionTestCase(APITestCase):
         self.user = CustomUser(
             email='test@12.ru',
         )
-        self.user.set_password('qwert123asd')
+        self.user.set_password('qwert123asdf')
         self.user.save()
         response = self.client.post(
-            '/api/token/',
-            {'email': 'test@12.ru', 'password': 'qwert123asd'},
-            content_type="application/json"
+            "/api/token/",
+            {'email': 'test@12.ru', 'password': 'qwert123asdf'},
+            # content_type="application/json"
         )
-        print(response.status_code)
-        self.access_token = response.json().get('access')
 
+        self.access_token = response.json().get('access')
+        print(response.json().get('access'))
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.access_token}')
     def test_create(self):
         response = self.client.post(
