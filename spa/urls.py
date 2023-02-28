@@ -5,9 +5,10 @@ from django.urls import path, include
 
 from config import settings
 from spa.apps import SpaConfig
+from spa.form_set import CustomUserListWithUserSubscription
 from spa.views import SigninView, SignupView, CourseViewSet, LessonListAPIView, LessonUpdateView, \
-    LessonCreateAPIView, LessonRetrieveView, LessonRetrieveUpdateDestroy, PayListAPIView, \
-    PayCustomUserDetailAPIView, PayRetrieveUpdateDestroyAPIView  # , CourseCreateAPIView
+    LessonCreateAPIView, LessonRetrieveUpdateDestroy, PayListAPIView, \
+    PayCustomUserDetailAPIView, PayRetrieveUpdateDestroyAPIView, UserSubscriptionViewSet  # , CourseCreateAPIView
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -25,12 +26,16 @@ urlpatterns = [
                path('home/course_create/', CourseViewSet.as_view({ "post": "create"}), name='home'),#template_name='spa/course_list.html'###,"get": "retrieve", "put": "update", "patch": "partial_update", "delete": "destroy"
                path('home/lesson_list/', LessonListAPIView.as_view(), name='lesson_list'),
                path('home/lesson_list/create/', LessonCreateAPIView.as_view(), name='lesson_create'),
-               path('home/lesson_list/<int:pk>', LessonUpdateView.as_view(), name='lesson_update'),
-               path('home/lesson_list/<int:pk>', LessonRetrieveView.as_view(), name='lesson_update'),
+               path('home/lesson_list/update/<int:pk>', LessonUpdateView.as_view(), name='lesson_update'),
+               #path('home/lesson_list/<int:pk>', LessonRetrieveView.as_view(), name='lesson_update'),
                path('home/lesson_detail/<int:pk>', LessonRetrieveUpdateDestroy.as_view(), name='lesson_RetrieveUpdateDestroy'),
                path('pay_list/', PayListAPIView.as_view()),
                path('pay/<int:pk>', PayCustomUserDetailAPIView.as_view()),
                path('pay_update/<int:pk>', PayRetrieveUpdateDestroyAPIView.as_view()),
+               path('home/UserSubscription/', UserSubscriptionViewSet.as_view({'get': 'list', "post": "create", "delete": "destroy"})),
+               path('home/UserSubscription/<int:pk>', UserSubscriptionViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'})),
+               path('home/UserSubscriptionWithCourse/', CustomUserListWithUserSubscription.as_view()),##Zdes novie polya mozhno dobavlyat ot UserSubscription
+
                path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
                path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
                ]

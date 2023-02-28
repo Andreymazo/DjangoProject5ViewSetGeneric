@@ -3,6 +3,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from pkg_resources import _
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 
 NULLABLE = {'blank': True, 'null': True}
 # UserManager
@@ -68,15 +69,15 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     # phone = models.CharField(max_length=20, verbose_name='телефон', **NULLABLE)
     # city = models.CharField(max_length=35, verbose_name='город',**NULLABLE)
     # avatar = models.ImageField(upload_to='media/', verbose_name='аватарка',**NULLABLE)
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    # USERNAME_FIELD = 'email'
+    # REQUIRED_FIELDS = []
 
-    def __str__(self):
-            return f'{self.email} '#{self.avatar} {self.city}{self.phone}
+    # def __str__(self):
+    #         return f'{self.email} '#{self.avatar} {self.city}{self.phone}
 
 class Lesson(models.Model):
     name = models.CharField(max_length=35, verbose_name='название урока', **NULLABLE)
-    preview = preview = models.ImageField(upload_to='media/', verbose_name='картинка к уроку', **NULLABLE)
+    preview = models.CharField(max_length = 50)
     smth = models.ForeignKey('spa.Course',on_delete=models.CASCADE, related_name='smthin', **NULLABLE)
     description = models.CharField(max_length=350, verbose_name='описание урока', **NULLABLE)
     reference = models.CharField(max_length=55, **NULLABLE, verbose_name='ссылка на видео')
@@ -92,7 +93,7 @@ class Lesson(models.Model):
 
 class Course(models.Model):
     name = models.CharField(max_length=35, verbose_name='название курса', **NULLABLE)
-    preview = models.ImageField(upload_to='media/', **NULLABLE)
+    preview = models.CharField(max_length=50, verbose_name=' фото урока', **NULLABLE)
     description = models.TextField(max_length=300, verbose_name='описание курса', **NULLABLE)
 
 
@@ -102,7 +103,13 @@ class Course(models.Model):
 
     def __str__(self):
             return f'{self.name}{self.preview}  {self.description}'
-
+    # default_permission = [AllowAny]
+    # permissions = {
+    #     "list": [IsAuthenticated],
+    #     "retrieve": [IsAdminUser]
+    # }
+    # def get_permissions(self):
+    #     return [perm() for perm in self.permissions.get(self.action, self.default_permission)]
 
 class Payment(models.Model):
     PAYMENT_CARD = 'card'
@@ -112,7 +119,7 @@ class Payment(models.Model):
         (PAYMENT_CASH, 'наличные')
     )
 
-    user = models.ForeignKey('spa.CustomUser', verbose_name='пользователь', on_delete=models.CASCADE)#settings.AUTH_USER_MODEL,
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name='пользователь', on_delete=models.CASCADE)#settings.AUTH_USER_MODEL,
     date_of_payment = models.DateTimeField(verbose_name='дата оплаты', **NULLABLE)
     lesson = models.ForeignKey('spa.Lesson', on_delete=models.CASCADE, verbose_name='урок', **NULLABLE)
     course = models.ForeignKey('spa.Course', on_delete=models.CASCADE, verbose_name='курс', **NULLABLE)
@@ -126,4 +133,27 @@ class Payment(models.Model):
     class Meta:
         verbose_name='платеж'
         verbose_name_plural = 'платежи'
+
+
+PERIOD_DAY = 86400
+PERIOD_WEEK = 604800
+PERIOD_MONTH = 2419200
+
+PERIODS = (
+        (PERIOD_DAY, 'день=86400'),
+        (PERIOD_WEEK, 'неделя=604800'),
+        (PERIOD_MONTH, 'месяц=2419200'),
+    )
+STATUS_DONE = False
+STATUS_START = True
+
+STATUSES = (
+        (STATUS_DONE, False),
+        (STATUS_START, True),
+    )
+class UserSubscription(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    status = models.BooleanField(choices=STATUSES, default=STATUS_START)
+    subscribed_on = models.DateTimeField(auto_now_add=True)##auto_created=?????????
+    period = models.TimeField(auto_now=True, max_length=10, choices=PERIODS, **NULLABLE)
 

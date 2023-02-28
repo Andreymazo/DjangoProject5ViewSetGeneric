@@ -9,11 +9,11 @@ from rest_framework.permissions import BasePermission
 
 from spa.forms import SigninForm, SignupForm
 from spa.forms import StyleFormMixin
-from spa.models import CustomUser, Course, Lesson, Payment
+from spa.models import CustomUser, Course, Lesson, Payment, UserSubscription
 from rest_framework import viewsets, generics
 
 from spa.serializer import LessonSerializer, CourseSerializer, PaymentSerializer, CustomUserSerializer, \
-    CustomUserPaySerializer
+    CustomUserPaySerializer, UserSubscriptionSerializer
 
 
 class SigninView(LoginView):
@@ -39,6 +39,10 @@ from rest_framework import permissions
 
 
 class RulesPermissionsChangeLesson(permissions.BasePermission):
+    # def has_permission(self, request, view):
+    #     if request.user.is_superuser:
+    #         return True
+    #     return False
     def has_object_permission(self, request, view, obj):
         return request.user.has_perm('spa.change_lesson', obj)
 class RulesPermissionsDeleteLesson(permissions.BasePermission):
@@ -57,21 +61,85 @@ class RulesPermissionsDeleteCourse(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         return request.user.has_perm('spa.delete_course', obj)
 class RulesCreateCourse(permissions.BasePermission):##UserPassesTestMixin
+    # def has_permission(self, request, view):
+    #     # if request.user.is_superuser:
+    #     #     return True
+    #     # return False
+    #
+    #     return bool(request.user.is_superuser)
+
+    # edit_methods = ("PUT", "PATCH")
 
     def has_permission(self, request, view):
-        if request.user.is_superuser:
+        if request.user.is_authenticated:
             return True
-        else:
-            return False
-class CourseViewSet(viewsets.ModelViewSet):
+
+    # def has_object_permission(self, request, view, obj):
+    #     if request.user.is_superuser:
+    #         return True
+    #
+    #     if request.method in permissions.SAFE_METHODS:
+    #         return True
+    #     #
+    #     # if obj.author == request.user:
+    #     #     return True
+    #     #
+    #     # if request.user.is_staff and request.method not in self.edit_methods:
+    #     #     return True
+    #
+    #     return False
+    # def has_object_permission(self, request, view, obj):
+    #     if request.method == 'POST' or "DELETE":
+    #         if request.user.is_superuser:
+    #             return True
+    #         return False
+    #     return obj.user == request.user
+        # Read permissions are allowed to any request,
+        # so we'll always allow GET, HEAD or OPTIONS requests.
+        # if request.method in permissions.SAFE_METHODS:
+        #     return True
+        #
+        # # Write permissions are only allowed to the owner of the snippet.
+        # return obj.user == request.user.is_superuser
+
+
+    # def has_object_permission(self, request, view, obj):
+    #     if request.user.is_superuser:
+    #         return True
+    #
+    #     return obj == request.user
+# class AuthorAllStaffAllButEditOrReadOnly(permissions.BasePermission):
+
+    # edit_methods = ("PUT", "PATCH")
+
+    # def has_permission(self, request, view):
+    #     if request.user.is_authenticated:
+            # return True
+
+    # def has_object_permission(self, request, view, obj):
+    #     if request.method == 'POST':
+    #         if request.user.is_superuser:
+    #             return True
+
+        # if request.method in permissions.SAFE_METHODS:
+        #     return True
+        #
+        # if obj.user == request.user:
+        #     return True
+        #
+        # if request.user.is_staff and request.method not in self.edit_methods:
+        #     return True
+
+        # return False
+class CourseViewSet(viewsets.ModelViewSet, PermissionRequiredMixin):
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
     template_name = 'spa/home.html'
     success_url = reverse_lazy('spa:Course_create')
     # def get_serializer_class(self):##Esli request.user has_perms to odin serializer, esli net, to drugoi
     #     if self.request.user
-    permission_classes = (RulesPermissionsChangeCourse, RulesPermissionsDeleteCourse, RulesCreateCourse)
-
+    permission_classes = (RulesCreateCourse,)##RulesPermissionsChangeCourse, RulesPermissionsDeleteCourse,
+    permission_required = "spa.change_course"
 class LessonListAPIView(generics.ListAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
@@ -103,10 +171,17 @@ class LessonCreateAPIView(generics.CreateAPIView):
 
     ##Sozdavat mozhet novie tolko superuser (kak mozhno sozdavat owneru, esli ego ese net?)
 
-class LessonUpdateView(UpdateAPIView):  ## UserPassesTestMixin,PermissionRequiredMixin,
+# class SuperUserPermissionsObj(permissions.BasePermission):
+#
+#     def has_object_permission(self, request, view, obj):
+#         if request.user.is_superuser:
+#             return True
+#
+#         return obj == request.user
+class LessonUpdateView(UpdateAPIView, UserPassesTestMixin, PermissionRequiredMixin):  ## ,
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
-    permission_classes = (RulesPermissionsChangeLesson,)
+    permission_classes = (RulesPermissionsChangeLesson, )##SuperUserPermissionsObj
 
     # def test_func(self):
     #     self.object = self.get_object()
@@ -114,9 +189,9 @@ class LessonUpdateView(UpdateAPIView):  ## UserPassesTestMixin,PermissionRequire
     # permission_required = "spa.change_lesson"## ishet po etomu url pochemuto: http://localhost:8000/users/?next=/home/lesson_list/1
 
 
-class LessonRetrieveView(RetrieveAPIView):
-    serializer_class = LessonSerializer
-    queryset = Lesson.objects.all()
+# class LessonRetrieveView(RetrieveAPIView):
+#     serializer_class = LessonSerializer
+#     queryset = Lesson.objects.all()
 
 class LessonRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     serializer_class = LessonSerializer
@@ -153,3 +228,9 @@ class UserUpdateAPIView(generics.UpdateAPIView):
 class PayCustomUserDetailAPIView(RetrieveAPIView):
     serializer_class = CustomUserPaySerializer
     queryset = CustomUser.objects.all()
+
+class UserSubscriptionViewSet(viewsets.ModelViewSet):
+    serializer_class = UserSubscriptionSerializer
+    queryset = UserSubscription.objects.all()
+    # template_name = 'spa/home.html'
+    # success_url = reverse_lazy('spa:Course_create')

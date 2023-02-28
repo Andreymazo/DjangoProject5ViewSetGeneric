@@ -4,7 +4,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, UsernameField, AuthenticationForm, ReadOnlyPasswordHashField
 from pkg_resources import _
 
-from spa.models import CustomUser
+from spa.models import CustomUser, UserSubscription
 from django.contrib.auth.models import User
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
@@ -145,3 +145,8 @@ class SignupForm(StyleFormMixin, UserCreationForm):
         model = CustomUser
         fields = ("email",)
         field_classes = {"username": UsernameField}
+class UserSubscriptionForm(forms.ModelForm):
+
+    class Meta:
+        model = UserSubscription
+        fields = '__all__'
