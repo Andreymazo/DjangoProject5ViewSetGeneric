@@ -37,6 +37,28 @@ class UserSubscriptionTestCase(APITestCase):
             response.status_code,
             status.HTTP_201_CREATED
         )
+    def test_get_profile(self):
+        self.test_create()#Chtobi ne nabivat zanovo setup
+        response = self.client.get(
+            f"/home/Profile/2",
+        )
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK
+        )
+        self.assertEqual(
+            response.json(),
+            {
+                "user": 3,
+                "slug": "",
+                "following_subscription": [1],
+                "following_payment": [1],
+                'subscription_info': [{'period': '18:06:12.271069',
+                                       'status': True,
+                                       'subscribed_on': '2023-03-01T18:06:12.271052+03:00'}]
+
+            }
+        )
 
 
 
