@@ -4,7 +4,9 @@
 # from forms import CustomUserRegistrationForm
 # from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 # from pkg_resources import _
+from django.contrib.admin import TabularInline
 
+import spa
 from spa.models import CustomUser, Course, Lesson \
     # , CustomUserManager
 
@@ -23,12 +25,12 @@ class CustomUserAdmin(BaseUserAdmin):
     list_filter = ('email',)
     ordering = ('email',)
     fieldsets = (
-        (None, {'fields': ('email', 'password')}),##'old_password', 'new_password', 'new_password2'
+        (None, {'fields': ('email', 'password')}),  ##'old_password', 'new_password', 'new_password2'
         ('Permissions', {'fields': ('is_staff', 'is_superuser', 'groups', 'user_permissions',)}),
         # ('Personal Information', {'fields': ('firstname', 'lastname', 'phone')}),
     )
     add_fieldsets = (
-        (None, {'fields': ('email', 'password', 'is_staff')}),##'password2', 
+        (None, {'fields': ('email', 'password', 'is_staff')}),  ##'password2',
         # ('Personal Information', {'fields': ('firstname', 'lastname', 'phone')}),
         # ('Company Information', {'fields': ('company',)}),
     )
@@ -117,3 +119,32 @@ admin.site.register(Lesson)
 # in temlate:<video width="500px" height="500px" controls>
 #      <source src="{{ post.video_file.url }}" type="video/mp4">
 # </video>
+
+
+# from django.contrib import admin
+
+from spa.models import Profile, UserSubscription, Payment
+
+admin.site.register(Profile)
+
+
+class Profile(admin.ModelAdmin):##TabularInline
+    list_display = ['slug']
+    # exclude = ("following_subscription",)#Niche ne menyaet
+    # model = Profile.following_subscription.through
+
+    #
+    # def get_form(self, request, obj=None, **kwargs):
+    #     self.fields.remove("following_subscription")
+    # def _get_form_for_get_fields(self, request, obj):
+    #     return self.get_form(request, obj, fields=None)
+
+
+
+    # raw_id_fields = ("follows",) <- wrong
+    # raw_id_fields = ("following_subscription",) # <- probably right, because your m2m relation with `User` table and django use name of that table to name field in `through` mode
+admin.site.register(Payment)
+
+admin.site.register(UserSubscription)
+
+list_display = ['slug', 'subscribed_on']

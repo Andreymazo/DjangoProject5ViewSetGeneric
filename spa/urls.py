@@ -5,10 +5,12 @@ from django.urls import path, include
 
 from config import settings
 from spa.apps import SpaConfig
-from spa.form_set import CustomUserListWithUserSubscription
+from spa.form_set import ProfileListWithPayment
+#from spaform_set import ProfileListWithUserSubscription ##CustomUserListWithUserSubscription,
 from spa.views import SigninView, SignupView, CourseViewSet, LessonListAPIView, LessonUpdateView, \
     LessonCreateAPIView, LessonRetrieveUpdateDestroy, PayListAPIView, \
-    PayCustomUserDetailAPIView, PayRetrieveUpdateDestroyAPIView, UserSubscriptionViewSet  # , CourseCreateAPIView
+    PayCustomUserDetailAPIView, PayRetrieveUpdateDestroyAPIView, UserSubscriptionViewSet, \
+    ProfileViewSet  # , CourseCreateAPIView
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -21,7 +23,7 @@ router.register(r'home', CourseViewSet.as_view({'get': 'list'}), basename='home'
 urlpatterns = [
                path('', SigninView.as_view(template_name='spa/login.html'), name='login'),
                path('register', SignupView.as_view(template_name='spa/register.html'), name='register'),
-               path('course_list/', CourseViewSet.as_view({'get': 'list'}), name='home_course_view'),#template_name='spa/home.html'
+               path('home/', CourseViewSet.as_view({'get': 'list'}), name='home_course_view'),#template_name='spa/home.html'
                # path('home/', CourseCreateAPIView.as_view(), name='home'),
                path('home/course_create/', CourseViewSet.as_view({ "post": "create"}), name='home'),#template_name='spa/course_list.html'###,"get": "retrieve", "put": "update", "patch": "partial_update", "delete": "destroy"
                path('home/lesson_list/', LessonListAPIView.as_view(), name='lesson_list'),
@@ -34,7 +36,9 @@ urlpatterns = [
                path('pay_update/<int:pk>', PayRetrieveUpdateDestroyAPIView.as_view()),
                path('home/UserSubscription/', UserSubscriptionViewSet.as_view({'get': 'list', "post": "create", "delete": "destroy"})),
                path('home/UserSubscription/<int:pk>', UserSubscriptionViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'})),
-               path('home/UserSubscriptionWithCourse/', CustomUserListWithUserSubscription.as_view()),##Zdes novie polya mozhno dobavlyat ot UserSubscription
+               path('home/Profile/', ProfileViewSet.as_view({'get': 'list', "post": "create", "delete": "destroy"})),
+               path('home/Profile/<int:pk>', ProfileViewSet.as_view({'get': 'retrieve'})),
+               path('home/ProfileWithCourse/', ProfileListWithPayment.as_view()),##Zdes novie polya mozhno dobavlyat ot UserSubscription
 
                path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
                path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),

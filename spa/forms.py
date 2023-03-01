@@ -4,7 +4,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, UsernameField, AuthenticationForm, ReadOnlyPasswordHashField
 from pkg_resources import _
 
-from spa.models import CustomUser, UserSubscription
+from spa.models import CustomUser, UserSubscription, Payment
 from django.contrib.auth.models import User
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
@@ -149,4 +149,9 @@ class UserSubscriptionForm(forms.ModelForm):
 
     class Meta:
         model = UserSubscription
+        fields = '__all__'
+class PaymentForm(forms.ModelForm):
+
+    class Meta:
+        model = Payment
         fields = '__all__'

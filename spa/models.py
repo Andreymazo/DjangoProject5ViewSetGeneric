@@ -1,9 +1,14 @@
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.contrib.contenttypes.models import ContentType
+from django.core.validators import FileExtensionValidator
 from django.db import models
 from pkg_resources import _
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
+
+import spa
 
 NULLABLE = {'blank': True, 'null': True}
 # UserManager
@@ -77,8 +82,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 class Lesson(models.Model):
     name = models.CharField(max_length=35, verbose_name='название урока', **NULLABLE)
-    preview = models.CharField(max_length = 50)
-    smth = models.ForeignKey('spa.Course',on_delete=models.CASCADE, related_name='smthin', **NULLABLE)
+    preview = models.CharField(max_length = 50, **NULLABLE)
+    smth = models.ForeignKey('spa.Course', on_delete=models.CASCADE, related_name='smthin', **NULLABLE)
     description = models.CharField(max_length=350, verbose_name='описание урока', **NULLABLE)
     reference = models.CharField(max_length=55, **NULLABLE, verbose_name='ссылка на видео')
 
@@ -88,21 +93,30 @@ class Lesson(models.Model):
         verbose_name_plural = 'уроки'
 
     def __str__(self):
-        return f'{self.smth} {self.name}{self.preview}   {self.reference}'#{self.description}
+        return f'{self.name}  '##{self.description}{self.smth} {self.reference}{self.preview}
 
 
 class Course(models.Model):
     name = models.CharField(max_length=35, verbose_name='название курса', **NULLABLE)
     preview = models.CharField(max_length=50, verbose_name=' фото урока', **NULLABLE)
     description = models.TextField(max_length=300, verbose_name='описание курса', **NULLABLE)
+    pro_file = models.ForeignKey('spa.Profile', on_delete=models.CASCADE, **NULLABLE)
+    # pro_file = GenericRelation('profile')##Dostup k profile cherez Course
 
 
     class Meta:
         verbose_name = 'курс'
         verbose_name_plural = 'курсы'
 
+
     def __str__(self):
             return f'{self.name}{self.preview}  {self.description}'
+
+# def check_for_change(instance):
+#     try:
+#         course = Course.objects.get(id=instance.id)
+#     except Course.DoesNotExist:
+#         return  None
     # default_permission = [AllowAny]
     # permissions = {
     #     "list": [IsAuthenticated],
@@ -119,7 +133,7 @@ class Payment(models.Model):
         (PAYMENT_CASH, 'наличные')
     )
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name='пользователь', on_delete=models.CASCADE)#settings.AUTH_USER_MODEL,
+    pro_filee = models.ForeignKey('spa.Profile', verbose_name='пользователь', on_delete=models.CASCADE, default=0)#settings.AUTH_USER_MODEL,
     date_of_payment = models.DateTimeField(verbose_name='дата оплаты', **NULLABLE)
     lesson = models.ForeignKey('spa.Lesson', on_delete=models.CASCADE, verbose_name='урок', **NULLABLE)
     course = models.ForeignKey('spa.Course', on_delete=models.CASCADE, verbose_name='курс', **NULLABLE)
@@ -127,7 +141,7 @@ class Payment(models.Model):
     form_of_payment = models.CharField(max_length=10, choices=PAY_FORMS, default=PAYMENT_CARD, verbose_name='способ оплаты наличные или перевод')
 
     def __str__(self):
-        return f'{self.user} {self.sum_of_payment}'
+        return f'{self.pro_filee} {self.sum_of_payment}'
 
 
     class Meta:
@@ -152,8 +166,105 @@ STATUSES = (
         (STATUS_START, True),
     )
 class UserSubscription(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    # user = models.ForeignKey('spa.Profile', on_delete=models.CASCADE)##Nelzya FK esli uzhe est M2M
+    course_subscribe = models.ForeignKey('spa.Course', on_delete=models.CASCADE, **NULLABLE)
+    lesson_subscribe = models.ForeignKey('spa.Lesson', on_delete=models.CASCADE, **NULLABLE)
     status = models.BooleanField(choices=STATUSES, default=STATUS_START)
     subscribed_on = models.DateTimeField(auto_now_add=True)##auto_created=?????????
     period = models.TimeField(auto_now=True, max_length=10, choices=PERIODS, **NULLABLE)
+    class Meta:
 
+        # ordering = ('user',)
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
+    def __str__(self):
+        return f'{self.status} {self.subscribed_on} {self.period}'
+class Profile(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, verbose_name='Профиль', on_delete=models.CASCADE)
+    slug = models.SlugField(verbose_name='Персональная ссылка', max_length=255, **NULLABLE)
+    bio = models.TextField(max_length=500, verbose_name='Информация о себе', blank=True)
+    # content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)###Tri polya sviazivaut Profile so vsemi modeliami voobshe
+    # content_id = models.PositiveIntegerField()
+    # content_object = GenericForeignKey('content_type', 'object_id')
+    avatar = models.ImageField(
+        verbose_name='Аватар профиля',
+        blank=True,
+        upload_to='media/',
+        validators=[FileExtensionValidator(
+            allowed_extensions=('png', 'jpg', 'webp', 'jpeg'))
+        ]
+    )
+    date_birthday = models.DateField(verbose_name='Дата рождения', blank=True, null=True)
+    following_subscription = models.ManyToManyField('spa.UserSubscription', verbose_name='Подписки', related_name='followers', **NULLABLE)
+    following_payment = models.ManyToManyField('spa.Payment', verbose_name='Платежи', related_name='followers_payments', symmetrical=False, **NULLABLE)
+
+    def __str__(self):
+        return f'{self.user} {self.slug} {self.following_subscription} {self.following_payment}  '
+    class Meta:
+        """
+        Сортировка, название модели в админ панели, таблица данными
+        """
+        ordering = ('user',)
+        verbose_name = 'Профиль'
+        verbose_name_plural = 'Профили пользователей'
+
+
+        # db_table = 'app_profiles'
+    # @property
+    # def get_avatar(self):
+    #     """
+    #     Получение аватара при отсутствии загруженного
+    #     """
+    #     if not self.avatar:
+    #         return f'https://ui-avatars.com/api/?size=128&background=random&name={self.user.username}'
+    #     return self.avatar.url
+
+    # @property
+    # def get_age(self):
+    #     """
+    #     Вычисление возраста пользователя
+    #     """
+    #     return (date.today() - self.date_birthday) // timedelta(days=365.2425)
+
+    # def get_absolute_url(self):
+    #     """
+    #     Ссылка на профиль
+    #     """
+    #     return reverse('profile', kwargs={'slug': self.slug})
+
+   # def save(self, *args, **kwargs):
+   #      """
+   #      Сохранение параметров модели при их отсутствии заполнения
+   #      """
+   #      if not self.slug:
+   #          self.slug = unique_slugify(self, self.user.username)
+   #      if self.slug:
+   #          self.slug = self.slug.lower()
+   #      super().save(*args, **kwargs)
+   #
+   #  def __str__(self):
+   #      """
+   #      Возвращение имени пользователя
+   #      """
+   #      return self.user.username
+
+   ###Signals are not allowed by Oleg
+# from django.db.models.signals import post_save
+# from django.dispatch import receiver
+#
+#
+# @receiver(post_save, sender=settings.AUTH_USER_MODEL)
+# def create_user_profile(sender, instance, created, **kwargs):
+#     """
+#     Сигнал создания профиля пользователя
+#     """
+#     if created:
+#         Profile.objects.create(user=instance)
+#
+#
+# @receiver(post_save, sender=settings.AUTH_USER_MODEL)
+# def save_user_profile(sender, instance, **kwargs):
+#     """
+#     Сигнал пересохранения профиля пользователя
+#     """
+#     instance.profile.save()

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.fields import CharField
 
-from spa.models import Lesson, Course, Payment, CustomUser, UserSubscription
+from spa.models import Lesson, Course, Payment, CustomUser, UserSubscription, Profile
 
 
 class Modelvalidator:
@@ -22,8 +22,8 @@ class LessonSerializer(serializers.ModelSerializer):
         model = Lesson
         fields = ('smth',
                   'name',
-                  'preview',
-                  'reference',
+                  # 'preview',
+                  # 'reference',
                   )
 
     validators = [Modelvalidator(field='preview')]
@@ -108,4 +108,18 @@ class CustomUserPaySerializer(serializers.ModelSerializer):
 class UserSubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserSubscription
-        fields = ["user", "status", "subscribed_on", ]
+        fields = ["status", "subscribed_on", "period"]
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    subscription_info = UserSubscriptionSerializer(source='following_subscription', many=True)
+
+    def create(self, validated_data):
+        profile_amount_data = validated_data.pop('following_subscription', [])
+        following_subscription = UserSubscription.objects.create(**validated_data)
+        for k in profile_amount_data:
+            Lesson.objects.create(following_subscription=following_subscription, **k)
+        return following_subscription
+    class Meta:
+        model = Profile
+        fields = ["user", "slug", "following_subscription", "following_payment", "subscription_info"]

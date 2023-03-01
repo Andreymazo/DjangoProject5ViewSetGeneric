@@ -9,22 +9,22 @@ from rest_framework.permissions import BasePermission
 
 from spa.forms import SigninForm, SignupForm
 from spa.forms import StyleFormMixin
-from spa.models import CustomUser, Course, Lesson, Payment, UserSubscription
+from spa.models import CustomUser, Course, Lesson, Payment, UserSubscription, Profile
 from rest_framework import viewsets, generics
 
 from spa.serializer import LessonSerializer, CourseSerializer, PaymentSerializer, CustomUserSerializer, \
-    CustomUserPaySerializer, UserSubscriptionSerializer
+    CustomUserPaySerializer, UserSubscriptionSerializer, ProfileSerializer
 
 
 class SigninView(LoginView):
     template_name = 'spa/login.html'
     form_class = SigninForm
-
+    success_url = reverse_lazy('spa:home_course_view')
 
 class SignupView(CreateView):
     template_name = 'spa/register.html'
     form_class = SignupForm
-    success_url = reverse_lazy('spa:home')
+    success_url = reverse_lazy('spa:home_course_view')
 
 
 # class CourseListView(ListView):
@@ -234,3 +234,7 @@ class UserSubscriptionViewSet(viewsets.ModelViewSet):
     queryset = UserSubscription.objects.all()
     # template_name = 'spa/home.html'
     # success_url = reverse_lazy('spa:Course_create')
+
+class ProfileViewSet(viewsets.ModelViewSet):
+    serializer_class = ProfileSerializer
+    queryset = Profile.objects.all()
