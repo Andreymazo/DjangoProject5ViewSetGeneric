@@ -10,7 +10,8 @@ from spa.form_set import ProfileListWithPayment
 from spa.views import SigninView, SignupView, CourseViewSet, LessonListAPIView, LessonUpdateView, \
     LessonCreateAPIView, LessonRetrieveUpdateDestroy, PayListAPIView, \
     PayCustomUserDetailAPIView, PayRetrieveUpdateDestroyAPIView, UserSubscriptionViewSet, \
-    ProfileViewSet  # , CourseCreateAPIView
+    ProfileViewSet, PaymentCheckView
+# , CourseCreateAPIView
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -34,11 +35,13 @@ urlpatterns = [
                path('pay_list/', PayListAPIView.as_view()),
                path('pay/<int:pk>', PayCustomUserDetailAPIView.as_view()),
                path('pay_update/<int:pk>', PayRetrieveUpdateDestroyAPIView.as_view()),
+
                path('home/UserSubscription/', UserSubscriptionViewSet.as_view({'get': 'list', "post": "create", "delete": "destroy"})),
                path('home/UserSubscription/<int:pk>', UserSubscriptionViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'})),
                path('home/Profile/', ProfileViewSet.as_view({'get': 'list', "post": "create", "delete": "destroy"})),
                path('home/Profile/<int:pk>', ProfileViewSet.as_view({'get': 'retrieve'})),
                path('home/ProfileWithCourse/', ProfileListWithPayment.as_view()),##Zdes novie polya mozhno dobavlyat ot UserSubscription
+               path('PaymentCheck/<int:pk>', PaymentCheckView.as_view(), name='paymentcheck'),
 
                path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
                path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),

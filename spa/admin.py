@@ -130,14 +130,11 @@ admin.site.register(Profile)
 
 class Profile(admin.ModelAdmin):##TabularInline
     list_display = ['slug']
-    # exclude = ("following_subscription",)#Niche ne menyaet
-    # model = Profile.following_subscription.through
 
-    #
-    # def get_form(self, request, obj=None, **kwargs):
-    #     self.fields.remove("following_subscription")
-    # def _get_form_for_get_fields(self, request, obj):
-    #     return self.get_form(request, obj, fields=None)
+    prepopulated_fields = {'slug': ('slug',)}  # new
+
+
+
 
 
 

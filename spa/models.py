@@ -5,6 +5,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelatio
 from django.contrib.contenttypes.models import ContentType
 from django.core.validators import FileExtensionValidator
 from django.db import models
+from django.urls import reverse
 from pkg_resources import _
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 
@@ -86,6 +87,7 @@ class Lesson(models.Model):
     smth = models.ForeignKey('spa.Course', on_delete=models.CASCADE, related_name='smthin', **NULLABLE)
     description = models.CharField(max_length=350, verbose_name='описание урока', **NULLABLE)
     reference = models.CharField(max_length=55, **NULLABLE, verbose_name='ссылка на видео')
+    price = models.IntegerField(default=1000)
 
 
     class Meta:
@@ -135,13 +137,18 @@ class Payment(models.Model):
 
     pro_filee = models.ForeignKey('spa.Profile', verbose_name='пользователь', on_delete=models.CASCADE, default=0)#settings.AUTH_USER_MODEL,
     date_of_payment = models.DateTimeField(verbose_name='дата оплаты', **NULLABLE)
-    lesson = models.ForeignKey('spa.Lesson', on_delete=models.CASCADE, verbose_name='урок', **NULLABLE)
-    course = models.ForeignKey('spa.Course', on_delete=models.CASCADE, verbose_name='курс', **NULLABLE)
+    lesson = models.ForeignKey('spa.Lesson', on_delete=models.CASCADE, related_name="lesson", verbose_name='урок', **NULLABLE)#db_constraint=False
+    course = models.ForeignKey('spa.Course', on_delete=models.CASCADE, related_name="course", verbose_name='курс', **NULLABLE)
     sum_of_payment = models.DecimalField(max_digits=8, decimal_places=2, default=0, verbose_name='сумма оплаты')
     form_of_payment = models.CharField(max_length=10, choices=PAY_FORMS, default=PAYMENT_CARD, verbose_name='способ оплаты наличные или перевод')
+    # PaymentURL = models.CharField(max_length=50, verbose_name= "ссылка на оплату")
+    Success = models.CharField(max_length=50, verbose_name= "Статус обработки", null=True )
+    ErrorCode = models.CharField(max_length=50, verbose_name= "Ошибка", null=True )
+    Message = models.CharField(max_length=50, verbose_name= "Сообщение", null=True )
+    Details = models.CharField(max_length=50, verbose_name= "Детали", null=True )
 
     def __str__(self):
-        return f'{self.pro_filee} {self.sum_of_payment}'
+        return f' {self.sum_of_payment}'#{self.pro_filee}
 
 
     class Meta:
@@ -165,6 +172,12 @@ STATUSES = (
         (STATUS_DONE, False),
         (STATUS_START, True),
     )
+class PaymentCheck(models.Model):
+    pass
+class PaymentCheckLog(models.Model):
+    pass
+
+
 class UserSubscription(models.Model):
     # user = models.ForeignKey('spa.Profile', on_delete=models.CASCADE)##Nelzya FK esli uzhe est M2M
     course_subscribe = models.ForeignKey('spa.Course', on_delete=models.CASCADE, **NULLABLE)
@@ -230,7 +243,10 @@ class Profile(models.Model):
     #     """
     #     Ссылка на профиль
     #     """
-    #     return reverse('profile', kwargs={'slug': self.slug})
+    #     return reverse('spa:profile', kwargs={'slug': self.slug})
+
+    def get_absolute_url(self):
+        return reverse('profile_detail', kwargs={'slug': self.slug})
 
    # def save(self, *args, **kwargs):
    #      """
