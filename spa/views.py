@@ -174,7 +174,15 @@ class CourseUpdateView(generics.UpdateAPIView):
         course_check.delay(self.object.pk, self.object.pk)
 
 
+
+    # def update(self, request, *args, **kwargs):
+    #     data_to_change = {'name': request.data.get("name")}
+    #     # Partial update of the data
+    #     serializer = self.serializer_class(request.user, data=data_to_change, partial=True)
+    #     if serializer.is_valid():
+    #         self.perform_update(serializer)
     #
+    #     return Response(serializer.data)
         # print(serializer)
     # def update(self, request, *args, **kwargs):
     #     partial = kwargs.pop('partial', False)

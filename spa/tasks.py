@@ -57,23 +57,21 @@ def course_check(course_pk, pk):
                 print(e)
                 pass
 
-    print(
-        f"test course_pk Course.pro_file.name UserSubscription.status_send {course_pk} ")  # {Course.pro_file(pro_file_id=2)}==   print(f"test course_pk Course.pro_file.name UserSubscription.status_send {course_pk} {Course.pro_file(pro_file_id=2)}")#
+    print(f"test course_pk Course.pro_file.name UserSubscription.status_send {course_pk} ")  # {Course.pro_file(pro_file_id=2)}==   print(f"test course_pk Course.pro_file.name UserSubscription.status_send {course_pk} {Course.pro_file(pro_file_id=2)}")#
     # TypeError: 'ForwardManyToOneDescriptor' object is not callable
 
     UserSubscription.objects.all().filter(pk=pk).first().status_send = STATUS_DONE##Posle rassilki opuskaem flag
-
-
+@shared_task()
 def filter_check():
     filter_payments = {"Success": True}
     payment_list = Payment.objects.filter(**filter_payments)
+    print('_______________', Payment.objects.filter(pk=1).first())
     if payment_list.exists():
         for i in payment_list:
-            print(f'otsilaem na email {i.pro_filee.email} profilya kotorie ne oplatili schet')
-        # send_mail(
-        #     subject='Oplata',
-        #     message='oplatite oplatu',
-        #     recipient_list=[]
-        #
-        # )
-
+            # print(f'otsilaem na email {i.pro_filee.email} profilya kotorie ne oplatili schet')
+            send_mail(
+                subject='Oplata',
+                message='oplatite oplatu',
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[i.pro_filee.email],
+                fail_silently=False)
