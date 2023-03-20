@@ -2,7 +2,7 @@ from django import forms
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UsernameField, AuthenticationForm, ReadOnlyPasswordHashField
-from pkg_resources import _
+# from pkg_resources import _
 
 from spa.models import CustomUser, UserSubscription, Payment
 from django.contrib.auth.models import User

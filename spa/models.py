@@ -7,7 +7,8 @@ from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
-from pkg_resources import _
+
+# from pkg_resources import _
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 
 import spa
@@ -50,7 +51,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     # phone = PhoneNumberField(null=True, blank=True)
     # company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, blank=True)
     password = models.CharField(max_length=240)
-    is_staff = models.BooleanField(_('staff status'), default=False)
+    # is_staff = models.BooleanField(_('staff status'), default=False)
+    is_staff = models.BooleanField('staff status', default=False)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['password']  # 'firstname', 'lastname',
 

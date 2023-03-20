@@ -9,6 +9,7 @@ from spa.models import STATUS_START, UserSubscription, Course, Mailinglog, STATU
 
 
 @shared_task
+# @task(name='course_check')
 def course_check(course_pk, pk):
     a = UserSubscription.objects.all().filter(pk=pk).first()
     # b = UserSubscription.objects.all()

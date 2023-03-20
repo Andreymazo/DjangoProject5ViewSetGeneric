@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os
 from datetime import timedelta
 from pathlib import Path
+
+from celery.schedules import crontab
 from dotenv import load_dotenv
 
 # pip3 install -U python-dotenv
@@ -28,8 +30,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["testserver", '127.0.0.1', 'localhost']
-
+ALLOWED_HOSTS = ["testserver", '127.0.0.1', 'localhost', '5435', '5432']
 # Application definition
 
 INSTALLED_APPS = [
@@ -49,7 +50,12 @@ INSTALLED_APPS = [
     'spa',
 
 ]
-
+CELERYBEAT_SCHEDULE = {
+    'my_scheduled_job': {
+        'task': 'course_check', # the same goes in the task name
+        'schedule': crontab(),
+    },
+}
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [(
         'rest_framework_simplejwt.authentication.JWTAuthentication')],
@@ -101,8 +107,14 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',#spa
+        'HOST': 'db',#127.0.0.1
+        'PORT': '5432',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres'
     }
 }
 
