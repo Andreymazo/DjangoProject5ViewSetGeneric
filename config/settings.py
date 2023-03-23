@@ -30,7 +30,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["testserver", '127.0.0.1', 'localhost', '5435', '5432']
+ALLOWED_HOSTS = ["testserver", '127.0.0.1', 'localhost', '5435', '5432', '0.0.0.0']
 # Application definition
 
 INSTALLED_APPS = [
@@ -110,8 +110,8 @@ DATABASES = {
         # 'ENGINE': 'django.db.backends.sqlite3',
         # 'NAME': BASE_DIR / 'db.sqlite3',
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',#spa
-        'HOST': 'db',#127.0.0.1
+        'NAME': 'spa',#spa
+        'HOST': 'localhost',#127.0.0.1 db
         'PORT': '5432',
         'USER': 'postgres',
         'PASSWORD': 'postgres'
