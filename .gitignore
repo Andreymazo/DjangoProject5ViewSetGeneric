@@ -1,5 +1,5 @@
 .gitignore
-.env
+
 /env/
 /media/
 docker-compose.yaml
