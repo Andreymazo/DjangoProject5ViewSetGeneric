@@ -111,10 +111,10 @@ DATABASES = {
         # 'NAME': BASE_DIR / 'db.sqlite3',
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'spa',#spa
-        'HOST': 'localhost',#127.0.0.1 db
-        'PORT': '5432',
+        #'HOST': 'localhost',#127.0.0.1 db
+        #'PORT': '5432',
         'USER': 'postgres',
-        'PASSWORD': '123456'
+        #'PASSWORD': '123456'
     }
 }
 
