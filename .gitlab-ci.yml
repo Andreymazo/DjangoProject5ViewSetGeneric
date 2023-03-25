@@ -1,0 +1,13 @@
+stages:
+  - deploy
+Deploy to prod:
+  stage: deploy
+  script:
+      - cp $ENV_PROD .env
+      - bash deployment_script.sh
+    ##  - ln -s /home/gitlab-runner/fs/media/ /home/gitlab-runner/builds/SSSSS/
+
+  only:
+      - master
+  tags:
+      - prod
