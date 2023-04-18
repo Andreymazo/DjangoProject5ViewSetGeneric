@@ -8,29 +8,29 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # subns = ['foreign_papa', 'Mike', 'Piter']##Sozdaem 3 profila na 3 userov
 ##############################################################
-        # usersubscription = UserSubscription.objects.create(
-        #     profile_id=Profile.objects.get(pk=2).id,  ##Podpiski 2ogo profila
-        #     course_subscribe=Course(pk=1),  ##Na pervii course
-        # )
-        # usersubscription.save()
-        # usersubscription = UserSubscription.objects.create(
-        #     profile_id=Profile.objects.get(pk=1).id,  ##Podpiski 1ogo profila
-        #     course_subscribe=Course(pk=1),  ##Na pervii course
-        # )
-        # # index+=1
-        # usersubscription.save()
-        # usersubscription = UserSubscription.objects.create(
-        #     profile_id=Profile.objects.get(pk=2).id,  ##Podpiski 2ogo profila
-        #     course_subscribe=Course(pk=2),  ##Na 2 course
-        # )
-        #
-        # usersubscription.save()
-        # usersubscription = UserSubscription.objects.create(
-        #     profile_id=Profile.objects.get(pk=3).id,  ##Podpiski 3ogo profila
-        #     course_subscribe=Course(pk=2),  ##Na 2 course
-        # )
-        #
-        # usersubscription.save()
+        usersubscription = UserSubscription.objects.create(
+            profile_id=Profile.objects.get(pk=2).id,  ##Podpiski 2ogo profila
+            course_subscribe=Course(pk=1),  ##Na pervii course
+        )
+        usersubscription.save()
+        usersubscription = UserSubscription.objects.create(
+            profile_id=Profile.objects.get(pk=1).id,  ##Podpiski 1ogo profila
+            course_subscribe=Course(pk=1),  ##Na pervii course
+        )
+        # index+=1
+        usersubscription.save()
+        usersubscription = UserSubscription.objects.create(
+            profile_id=Profile.objects.get(pk=2).id,  ##Podpiski 2ogo profila
+            course_subscribe=Course(pk=2),  ##Na 2 course
+        )
+
+        usersubscription.save()
+        usersubscription = UserSubscription.objects.create(
+            profile_id=Profile.objects.get(pk=3).id,  ##Podpiski 3ogo profila
+            course_subscribe=Course(pk=2),  ##Na 2 course
+        )
+
+        usersubscription.save()
 ########################################################### Nizhe proverki
         # a=Profile.objects.get(pk=1).id
         # print('FFFFFFFFFFFFFFFF', a)
