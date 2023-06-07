@@ -14,6 +14,7 @@ from django.core.exceptions import ValidationError
 
 class CustomUserRegistrationForm(forms.ModelForm):
     is_staff = forms.BooleanField(label='staff status')
+    is_active = forms.BooleanField()
     # firstname = forms.CharField(label = 'First Name*', max_length = 120)
     # lastname = forms.CharField(label = 'Last Name*', max_length = 120)
     email = forms.EmailField(label = 'Email*')
@@ -24,7 +25,7 @@ class CustomUserRegistrationForm(forms.ModelForm):
 
     class Meta:
         model = CustomUser
-        fields = ('email', 'password', 'is_staff')#'firstname', 'lastname', 'company','phone',
+        fields = ('email', 'password', 'is_staff', 'is_active')#'firstname', 'lastname', 'company','phone',
 
     def clean_email(self):
         email = self.cleaned_data['email'].lower()
@@ -46,6 +47,7 @@ class CustomUserRegistrationForm(forms.ModelForm):
             # 'firstname':self.cleaned_data['firstname'],
             # 'lastname':self.cleaned_data['lastname'],
             'email':self.cleaned_data['email'],
+            'is_active': self.cleaned_data['is_active'],
             # 'phone':self.cleaned_data['phone'],
             'password':self.cleaned_data['password'],
             'admin':'',
@@ -53,6 +55,7 @@ class CustomUserRegistrationForm(forms.ModelForm):
         }
         custom_user = CustomUser.objects.create_user(
             context['email'],
+            context['is_active'],
             # context['firstname'],
             # context['lastname'],
             # context['company'],
@@ -61,6 +64,7 @@ class CustomUserRegistrationForm(forms.ModelForm):
 
         user = super().save(commit=False)
         user.set_password(self.cleaned_data["password"])
+
         if commit:
             user.save()
             if hasattr(self, "save_m2m"):
@@ -76,7 +80,7 @@ class CustomUserChangeForm(forms.ModelForm):##UserChangeForm
 
     class Meta:
         model = CustomUser
-        fields = ('email', 'password')
+        fields = ('email', 'password', 'is_active')
 
     # # firstname = forms.CharField(label = 'First Name', max_length = 120)
     # # lastname = forms.CharField(label = 'Last Name', max_length = 120)

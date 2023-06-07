@@ -116,14 +116,13 @@ class CourseSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
-
     def _user(self):
         if self.context.get('request'):
-
             return self.context['request'].user.profile
-        return None##Polzovatel ne aftorizovan
+        return None  ##Polzovatel ne aftorizovan
+
     def get_has_subscrpt(self, instance):
-         #Profile.objects.get
+        # Profile.objects.get
         return instance.usersubscription_set.filter(profile=self._user()).exists()
 
 
@@ -143,10 +142,58 @@ class PaymentSerializer(serializers.ModelSerializer):
         # ]
         # '__all__'
 
+
+from django.contrib.auth.hashers import make_password
+
+
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = "__all__"
+        # fields = ('email', 'username', 'refreshToken', 'password')
+###########################################  instance.is_active = True  ######################3
+    # def create(self, validated_data):
+    #     password = validated_data.pop('password', None)
+    #     instance = self.Meta.model(**validated_data)
+    #
+    #     # Adding the below line made it work for me.
+    #     instance.is_active = True
+    #     if password is not None:
+    #         # Set password does the hash, so you don't need to call make_password
+    #         instance.set_password(password)
+    #     instance.save()
+    #     return instance
+
+        # def validate_password(self, value: str) -> str:
+        #     """
+        #     Hash value passed by user.
+        #
+        #     :param value: password of a user
+        #     :return: a hashed version of the password
+        #     """
+        #     return make_password(value)
+
+
+    # def create(self, validated_data):
+    #     password = validated_data.pop('password', None)
+    #     instance = self.Meta.model(**validated_data)
+    #
+    #     # Adding the below line made it work for me.
+    #     instance.is_active = True
+    #     if password is not None:
+    #         # Set password does the hash, so you don't need to call make_password
+    #         instance.set_password(password)
+    #     instance.save()
+    #     return instance
+    #
+    # def validate_password(self, value: str) -> str:
+    #     """
+    #     Hash value passed by user.
+    #
+    #     :param value: password of a user
+    #     :return: a hashed version of the password
+    #     """
+    #     return make_password(value)
 
 
 class CustomUserPaySerializer(serializers.ModelSerializer):

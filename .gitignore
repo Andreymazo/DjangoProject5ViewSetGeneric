@@ -5,7 +5,6 @@ __pycache__
 /media/
 docker-compose.yaml
 Dockerfile
-spa
 identifier.sqlite
 db.sqlite3
 .gitlab-ci.yaml

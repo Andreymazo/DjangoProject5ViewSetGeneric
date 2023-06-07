@@ -3,18 +3,26 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 WORKDIR /spa
 EXPOSE 8000
-WORKDIR /spa
+#COPY ./requirements.txt /spa/
 
 #COPY ./requirements.txt /spa/
 COPY . /spa
 
-RUN pip3 install -r requirements.txt --no-cache-dir
+#install dependencies
+COPY ./requirements.txt .
+RUN \
+ apk add --no-cache python3 postgresql-libs libxml2-dev libxslt-dev && \
+ apk add --no-cache --virtual .build-deps gcc python3-dev musl-dev postgresql-dev && \
+ pip install --upgrade pip && \
+ python3 -m pip install -r requirements.txt --no-cache-dir && \
+ apk --purge del .build-deps
+#RUN pip3 install -r requirements.txt --no-cache-dir
 
 #FROM python:3
 #EXPOSE 8000
 #WORKDIR /spa
 
-#COPY ./requirements.txt /spa/
+
 
 #RUN pip3 install -r requirements.txt --no-cache-dir
 

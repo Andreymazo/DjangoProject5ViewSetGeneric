@@ -5,6 +5,7 @@ class CustomUserManager(BaseUserManager):
         email = self.normalize_email(email)
         user = self.model(
             email=email,
+            is_active=True,
             # firstname=firstname,
             # lastname=lastname,
 

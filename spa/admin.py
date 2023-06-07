@@ -25,12 +25,12 @@ class CustomUserAdmin(BaseUserAdmin):
     list_filter = ('email',)
     ordering = ('email',)
     fieldsets = (
-        (None, {'fields': ('email', 'password')}),  ##'old_password', 'new_password', 'new_password2'
+        (None, {'fields': ('is_active', 'email', 'password')}),  ##'old_password', 'new_password', 'new_password2'
         ('Permissions', {'fields': ('is_staff', 'is_superuser', 'groups', 'user_permissions',)}),
         # ('Personal Information', {'fields': ('firstname', 'lastname', 'phone')}),
     )
     add_fieldsets = (
-        (None, {'fields': ('email', 'password', 'is_staff')}),  ##'password2',
+        (None, {'fields': ('email', 'password', 'is_staff', 'is_active')}),  ##'password2',
         # ('Personal Information', {'fields': ('firstname', 'lastname', 'phone')}),
         # ('Company Information', {'fields': ('company',)}),
     )

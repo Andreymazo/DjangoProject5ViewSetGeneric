@@ -53,6 +53,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     password = models.CharField(max_length=240)
     # is_staff = models.BooleanField(_('staff status'), default=False)
     is_staff = models.BooleanField('staff status', default=False)
+    is_active = models.BooleanField(default=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['password']  # 'firstname', 'lastname',
 

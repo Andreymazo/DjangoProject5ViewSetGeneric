@@ -1,6 +1,7 @@
 import requests
 import json
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, UsernameField
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.mixins import UserPassesTestMixin, PermissionRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.shortcuts import render
@@ -22,6 +23,7 @@ from rest_framework import viewsets, generics, status
 
 from spa.serializer import LessonSerializer, CourseSerializer, PaymentSerializer, CustomUserSerializer, \
     CustomUserPaySerializer, UserSubscriptionSerializer, ProfileSerializer
+from rest_framework import permissions
 
 
 class SigninView(LoginView):
@@ -43,8 +45,6 @@ class SignupView(CreateView):
 # class CourseCreateAPIView(generics.CreateAPIView):###Rabotaet home/ no nam lishnee, sozdaem na home/course_create/
 #     serializer_class = CourseSerializer
 #     queryset = Course.objects.all()##########################
-
-from rest_framework import permissions
 
 
 class RulesPermissionsChangeLesson(permissions.BasePermission):
@@ -168,12 +168,10 @@ class CourseUpdateView(generics.UpdateAPIView):
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
 
-    def perform_update(self, serializer):####!!AttributeError: 'function' object has no attribute 'pk'
+    def perform_update(self, serializer):  ####!!AttributeError: 'function' object has no attribute 'pk'
         self.object = serializer.save()
         # print("PPPPPPPPPPPP")
         course_check.delay(self.object.pk, self.object.pk)
-
-
 
     # def update(self, request, *args, **kwargs):
     #     data_to_change = {'name': request.data.get("name")}
@@ -183,7 +181,7 @@ class CourseUpdateView(generics.UpdateAPIView):
     #         self.perform_update(serializer)
     #
     #     return Response(serializer.data)
-        # print(serializer)
+    # print(serializer)
     # def update(self, request, *args, **kwargs):
     #     partial = kwargs.pop('partial', False)
     #     instance = self.get_object()
@@ -256,20 +254,12 @@ class LessonRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     permission_classes = (RulesPermissionsChangeLesson, RulesPermissionsDeleteLesson)
 
 
-class PayListAPIView(generics.ListAPIView):##Vistavlennie scheta
+class PayListAPIView(generics.ListAPIView):  ##Vistavlennie scheta
     serializer_class = PaymentSerializer
     queryset = Payment.objects.all()
 
 
-
-# import hashlib
-#
-# hash_object = hashlib.sha256(b'Hello World')
-# hex_dig = hash_object.hexdigest()
-#
-# print(hex_dig)
-
-class PayListCheckAPIView(generics.ListAPIView):#Proveryaem chto oplacheno po pk
+class PayListCheckAPIView(generics.ListAPIView):  # Proveryaem chto oplacheno po pk
     serializer_class = PaymentSerializer
     queryset = Payment.objects.all()
 
@@ -278,7 +268,7 @@ class PayListCheckAPIView(generics.ListAPIView):#Proveryaem chto oplacheno po pk
         # lesson_pk = self.kwargs.get('pk')
         lesson_pk = self.kwargs.get('pk')
         lesson_1 = Lesson.objects.get(pk=3)  ###pk=1 oplachen, pk=2 poka ne oplachen (vozvrashaet raznie statusi
-        payment=Payment.objects.get(pk=lesson_pk)
+        payment = Payment.objects.get(pk=lesson_pk)
         # print('test ', lesson)
         print('test 1st  ', lesson_1)
         print('test 1st lesson_1.price lesson_1.name ', lesson_1.price, lesson_1.name)
@@ -369,8 +359,6 @@ class PayListCheckAPIView(generics.ListAPIView):#Proveryaem chto oplacheno po pk
                 # "url": r.json()["PaymentURL"]
             }
         )
-
-
 
     # def get(self, pk, *args, **kwargs):
     # lesson_1 = Lesson.objects.get(pk=1)
@@ -565,8 +553,8 @@ class UserSubscriptionViewSet(viewsets.ModelViewSet):
     serializer_class = UserSubscriptionSerializer
     queryset = UserSubscription.objects.all()
 
-class UserSubscriptionAPIView(APIView):## "course_subscribe": 1 Dobavlyaem/Udalyaem podpisku
 
+class UserSubscriptionAPIView(APIView):  ## "course_subscribe": 1 Dobavlyaem/Udalyaem podpisku
 
     @swagger_auto_schema(responses={200: UserSubscriptionSerializer(many=True)})
     def post(self, *args, **kwargs):
@@ -585,9 +573,6 @@ class UserSubscriptionAPIView(APIView):## "course_subscribe": 1 Dobavlyaem/Udaly
             message = "подписка добавлена"
         return Response({"message": message})
 
-
-
-
     # template_name = 'spa/home.html'
     # success_url = reverse_lazy('spa:Course_create')
 
@@ -595,7 +580,6 @@ class UserSubscriptionAPIView(APIView):## "course_subscribe": 1 Dobavlyaem/Udaly
 class ProfileViewSet(viewsets.ModelViewSet):
     serializer_class = ProfileSerializer
     queryset = Profile.objects.all()
-
 
     # class PaymentCheckView(View): ##Oplachivaem urok cherez UMoney
     #     def get(self, *args, **kwargs):
